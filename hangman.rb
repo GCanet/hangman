@@ -1,11 +1,11 @@
 class Hangman
-  attr_accessor :resultado, :guess, :solucion
+  attr_accessor :guess, :solucion, :vidas
 
   def initialize
     @breaker = Breaker.new(self)
-    @resultado = ''
     @guess = ''
     @solucion = ''
+    @vidas = 6
   end
 
   def playinicial
@@ -24,32 +24,129 @@ class Hangman
 end
 
 class Breaker
-  attr_accessor
+  attr_accessor :hangman
 
   def initialize(hangman)
     @hangman = hangman
   end
 
   def partida
+    dibujo_hangman(@hangman.vidas)
     palabra_maquina
     user_guess
   end
 
   def palabra_maquina
     fname = 'dictionary.txt'
-
-    File.readlines(fname).each do |word|
-      ### falta randomizar
-      if word.length > 5 && word.length < 12
-        @hangman.solucion = word
-      end
-    end
-    puts "La máquina ya tiene palabra, su longitud es: #{@hangman.solucion.length}."
+    @hangman.solucion = File.readlines(fname).select { |word| word.length > 5 && word.length < 12 }.sample.chomp.upcase
+    puts "La máquina ya tiene palabra, su longitud es: #{hangman.solucion.length}."
+    puts @hangman.solucion
   end
 
   def user_guess
-    puts 'Introduzca su palabra:'
+    puts 'Introduzca su conjetura:'
     @hangman.guess = gets.chomp.upcase.split('')
+    comprobacion
+  end
+
+  def comprobacion
+    if @hangman.guess == @hangman.solucion
+      puts 'Tenemos un ganador!!'
+      @hangman.playinicial
+    else
+      puts 'El usuario pierde una vida.'
+      vida_menos
+    end
+  end
+
+  def vida_menos
+    @hangman.vidas -= 1
+    dibujo_hangman(@hangman.vidas)
+    user_guess
+  end
+
+  def dibujo_hangman(vidas)
+    hangman = [
+      [
+        '  ________',
+        '  |      |',
+        '  |       ',
+        '  |       ',
+        '  |       ',
+        ' _|_',
+        '|   |______',
+        '|__________|'
+      ],
+      [
+        '  ________',
+        '  |      |',
+        '  |      O',
+        '  |       ',
+        '  |       ',
+        ' _|_',
+        '|   |______',
+        '|__________|'
+      ],
+      [
+        '  ________',
+        '  |      |',
+        '  |      O',
+        '  |      | ',
+        '  |       ',
+        ' _|_',
+        '|   |______',
+        '|__________|'
+      ],
+      [
+        '  ________',
+        '  |      |',
+        '  |      O',
+        '  |     /| ',
+        '  |       ',
+        ' _|_',
+        '|   |______',
+        '|__________|'
+      ],
+      [
+        '  ________',
+        '  |      |',
+        '  |      O',
+        '  |     /|\\',
+        '  |       ',
+        ' _|_',
+        '|   |______',
+        '|__________|'
+      ],
+      [
+        '  ________',
+        '  |      |',
+        '  |      O',
+        '  |     /|\\',
+        '  |     / ',
+        ' _|_',
+        '|   |______',
+        '|__________|'
+      ],
+      [
+        '  ________',
+        '  |      |',
+        '  |      O',
+        '  |     /|\\',
+        '  |     / \\',
+        ' _|_',
+        '|   |______',
+        '|__________|'
+      ]
+    ]
+
+    hangman[vidas].each do |line|
+      puts line
+    end
+
+    if vidas == 0
+      puts 'El usuario ha perdido!'
+      @hangman.playinicial
+    end
   end
 end
 
