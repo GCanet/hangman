@@ -60,6 +60,7 @@ class Breaker
   def vida_menos
     @hangman.vidas -= 1
     dibujo_hangman(@hangman.vidas)
+    puts "  #{@hangman.guess.join}  "
     user_guess
   end
 
