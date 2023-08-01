@@ -43,14 +43,25 @@ class Breaker
 
   def introducir_letra
     puts 'Introduzca una letra:'
-    @hangman.guess = gets.chomp.upcase.split('')
+    letter = gets.chomp.upcase
+    @hangman.guess << letter
     comprobacion
   end
 
   def comprobacion
-    if @hangman.guess == @hangman.solucion
-      puts 'Tenemos un ganador!!'
-      @hangman.playinicial
+    if @hangman.solucion.include?(@hangman.guess.last)
+      @hangman.solucion.each_with_index do |letter, index|
+        if letter == @hangman.guess.last
+          @hangman.guess[index] = letter
+        end
+      end
+      if @hangman.guess == @hangman.solucion
+        puts 'Tenemos un ganador!!'
+        @hangman.playinicial
+      else
+        puts '¡Adivinaste una letra correctamente!'
+        partida
+      end
     else
       puts 'El usuario pierde una vida.'
       vida_menos
@@ -154,8 +165,8 @@ class Hangman
 
   def initialize
     @breaker = Breaker.new(self)
-    @guess = ''
-    @solucion = ''
+    @guess = []
+    @solucion = []
     @vidas = 6
   end
 
