@@ -141,7 +141,7 @@ class Breaker
       puts line
     end
 
-    if vidas == 0
+    if vidas.zero?
       puts 'Game over! Te has quedado sin vidas!!'
       @hangman.playinicial
     end
