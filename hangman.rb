@@ -20,48 +20,55 @@ class Breaker
       @hangman.solucion = File.readlines(fname).select { |word| word.length > 5 && word.length < 12 }.sample.chomp.upcase
       puts "La máquina ya tiene palabra, su longitud es: #{hangman.solucion.length}."
       @hangman.guess = '_' * @hangman.solucion.length
-      puts @hangman.solucion
     else
       puts "La máquina ya tiene una palabra guardada: #{@hangman.solucion}"
     end
+    puts @hangman.solucion
   end
 
   def user_guess
-    puts 'CONTIUNAR = C, GUARDAR Y SALIR = S(s/c)'
+    puts 'GUARDAR Y SALIR? (y/n)'
     answer = gets.chomp.downcase
 
     case answer
-    when 'c'
+    when 'n'
       introducir_letra
-    when 's'
+    when 'y'
       @hangman.save_game
       exit
-    else
-      puts 'Entrada inválida. Por favor, pulsa S o N.'
     end
   end
 
   def introducir_letra
+    puts "Letras utilizadas: #{@hangman.used_letters}"
     puts 'Introduzca una letra:'
     letter = gets.chomp.upcase
-    @hangman.guess << letter
+
+    if @hangman.used_letters.include?(letter)
+      puts 'Esta letra ya ha sido utilizada.'
+    else
+      @hangman.used_letters << letter
+      @hangman.solucion.chars.each_with_index do |lett, index|
+        if lett == letter
+          @hangman.guess[index] = lett
+        end
+      end
+    end
     comprobacion
   end
 
   def comprobacion
-    if @hangman.solucion.include?(@hangman.guess.last)
-      @hangman.solucion.each_with_index do |letter, index|
-        if letter == @hangman.guess.last
-          @hangman.guess[index] = letter
+    if @hangman.solucion == @hangman.guess
+      puts '¡Tenemos un ganador!'
+      @hangman.playinicial
+    elsif @hangman.solucion.split('').include?(@hangman.guess[-1])
+      puts '¡Adivinaste una letra correctamente!'
+      @hangman.solucion.split('').each_with_index do |lett, index|
+        if lett == @hangman.guess[-1] && @hangman.guess[index] != lett
+          @hangman.guess[index] = lett
         end
       end
-      if @hangman.guess == @hangman.solucion
-        puts 'Tenemos un ganador!!'
-        @hangman.playinicial
-      else
-        puts '¡Adivinaste una letra correctamente!'
-        partida
-      end
+      user_guess
     else
       puts 'El usuario pierde una vida.'
       vida_menos
@@ -71,7 +78,7 @@ class Breaker
   def vida_menos
     @hangman.vidas -= 1
     dibujo_hangman(@hangman.vidas)
-    puts "  #{@hangman.guess.join}  "
+    puts "  #{@hangman.guess}  "
     user_guess
   end
 
@@ -161,13 +168,14 @@ class Breaker
 end
 
 class Hangman
-  attr_accessor :guess, :solucion, :vidas
+  attr_accessor :guess, :solucion, :vidas, :used_letters
 
   def initialize
     @breaker = Breaker.new(self)
-    @guess = []
-    @solucion = []
+    @guess = ''
+    @solucion = ''
     @vidas = 6
+    @used_letters = []
   end
 
   def playinicial
