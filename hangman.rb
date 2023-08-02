@@ -34,8 +34,16 @@ class Breaker
     when 'n'
       introducir_letra
     when 'y'
+      puts '.'
+      puts '..'
+      puts '...'
+      puts '....'
+      puts '.....Guardando partida'
       @hangman.save_game
       exit
+    else
+      puts 'Letra erronea, introduzca (Y)es o (N)o'
+      user_guess
     end
   end
 
@@ -54,20 +62,11 @@ class Breaker
         end
       end
     end
-    comprobacion
-  end
-
-  def comprobacion
     if @hangman.solucion == @hangman.guess
       puts '¡Tenemos un ganador!'
       @hangman.playinicial
-    elsif @hangman.solucion.split('').include?(@hangman.guess[-1])
+    elsif @hangman.solucion.chars.include?(letter)
       puts '¡Adivinaste una letra correctamente!'
-      @hangman.solucion.split('').each_with_index do |lett, index|
-        if lett == @hangman.guess[-1] && @hangman.guess[index] != lett
-          @hangman.guess[index] = lett
-        end
-      end
       user_guess
     else
       puts 'El usuario pierde una vida.'
@@ -78,7 +77,7 @@ class Breaker
   def vida_menos
     @hangman.vidas -= 1
     dibujo_hangman(@hangman.vidas)
-    puts "  #{@hangman.guess}  "
+    puts "*[ #{@hangman.guess} ]*"
     user_guess
   end
 
@@ -192,7 +191,11 @@ class Hangman
         puts 'Empieza el juego, tú adivinas!'
         @breaker.partida
       when 'c'
-        puts 'Cargando partida...'
+        puts '.'
+        puts '..'
+        puts '...'
+        puts '....'
+        puts '.....Cargando partida'
         load_game
       when 's'
         puts 'Cerrando juego.'
