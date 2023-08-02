@@ -23,7 +23,6 @@ class Breaker
     else
       puts "La máquina ya tiene una palabra guardada: #{@hangman.solucion}"
     end
-    puts @hangman.solucion
   end
 
   def user_guess
@@ -210,7 +209,8 @@ class Hangman
     game_data = {
       guess: @guess,
       solucion: @solucion,
-      vidas: @vidas
+      vidas: @vidas,
+      used_letters: @used_letters
     }
     File.open('saved.json', 'w') do |file|
       file.write(JSON.dump(game_data))
@@ -223,6 +223,7 @@ class Hangman
       @guess = game_data['guess']
       @solucion = game_data['solucion']
       @vidas = game_data['vidas']
+      @used_letters = game_data['used_letters']
       @breaker.partida
     else
       puts 'No se encontró ninguna partida guardada.'
