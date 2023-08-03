@@ -183,11 +183,11 @@ class Hangman
 
   def lang_inicial
     puts '1 = English / 2 = Spanish'
-    awnser = gets.chomp.downcase
+    answer = gets.chomp.downcase
 
-    case awnser
+    case answer
     when '1'
-      mensajes = {
+      @mensajes = {
         letras_utilizadas: 'Used letters:',
         introducir_letra: 'Enter a letter:',
         letra_repetida: 'This letter has already been used.',
@@ -208,7 +208,7 @@ class Hangman
       }
       playinicial
     when '2'
-      mensajes = {
+      @mensajes = {
         letras_utilizadas: 'Letras utilizadas:',
         introducir_letra: 'Introduzca una letra:',
         letra_repetida: 'Esta letra ya ha sido utilizada.',
@@ -230,34 +230,35 @@ class Hangman
       playinicial
     else
       puts 'Please write 1 or 2'
+      lang_inicial
     end
   end
 
   def playinicial
     loop do
-      puts mensajes[:mensaje_inicial]
+      puts @mensajes[:mensaje_inicial]
       answer = gets.chomp.downcase
 
       case answer
       when 'a'
-        vidas = 6
+        @vidas = 6
         puts '----------------------'
         puts '|      hangman       |'
         puts '----------------------'
-        puts mensajes[:empieza_juego]
+        puts @mensajes[:empieza_juego]
         @breaker.partida
       when 'c'
         puts '.'
         puts '..'
         puts '...'
         puts '....'
-        puts mensajes[:load_game]
+        puts @mensajes[:load_game]
         load_game
       when 's'
-        puts mensajes[:closing_game]
+        puts @mensajes[:closing_game]
         exit
       else
-        puts mensajes[:entr_invalida]
+        puts @mensajes[:entr_invalida]
       end
     end
   end
@@ -285,7 +286,7 @@ class Hangman
       @mensajes = game_data['mensajes']
       @breaker.partida
     else
-      puts mensajes[:no_partida]
+      puts @mensajes[:no_partida]
     end
   end
 end
